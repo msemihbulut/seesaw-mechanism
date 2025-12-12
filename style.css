@@ -1,0 +1,41 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+#simulation-area {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    background-color: #ffffff;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+
+#seesaw-system {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    height: 200px;
+}
