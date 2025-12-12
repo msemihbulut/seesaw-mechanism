@@ -69,3 +69,24 @@ body {
     border-bottom: 60px solid #95a5a6;
     z-index: 1;
 }
+
+.weight {
+    position: absolute;
+    bottom: 100%;
+    width: 40px;
+    height: 40px;
+    background-color: #e74c3c;
+    border: 2px solid #c0392b;
+    border-radius: 4px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    
+    pointer-events: none; 
+    
+    transform: translateX(-50%);
+}
