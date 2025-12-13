@@ -13,17 +13,12 @@
     <div class="container">
         <header>
             <h1>Seesaw Mechanism</h1>
-            <button id="reset-btn">Reset Mechanism</button>
-        </header>
 
-        <div id="sim-area">
-            <div id="seesaw">
-                <div id="plank">
-                    <div id="weight-preview" class="weight"></div>
-                </div>
-                <div id="pivot"></div>
+            <div class="controls">
+                <button id="reset-btn">Reset Mechanism</button>
+                <button id="pause-btn">Pause Mechanism</button>
             </div>
-        </div>
+        </header>
 
         <div id="infos">
             <div class="stats">
@@ -44,6 +39,15 @@
             <div class="stats">
                 <h3>Right Total Weight</h3>
                 <span id="right-total-weight">0 kg</span>
+            </div>
+        </div>
+
+        <div id="sim-area">
+            <div id="seesaw">
+                <div id="plank">
+                    <div id="weight-preview" class="weight"></div>
+                </div>
+                <div id="pivot"></div>
             </div>
         </div>
 

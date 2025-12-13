@@ -8,12 +8,14 @@ const weightPreviewDisplay = document.getElementById('weight-preview');
 const historyContainer = document.getElementById('history-container');
 
 const resetBtn = document.getElementById('reset-btn');
+const pauseBtn = document.getElementById('pause-btn');
 
 const PLANK_WIDTH = 600;
 
 let objects = [];
 let nextWeight = 0;
 let activityHistory = [];
+let isPause = false;
 
 window.addEventListener('load', () => {
     const savedData = localStorage.getItem('seesawStatus');
@@ -107,9 +109,10 @@ function updateSimulation() {
     if (angle > 30) angle = 30;
     if (angle < -30) angle = -30;
 
-    plank.style.transform = `rotate(${angle}deg)`;
-
-    angleDisplay.innerText = Math.round(angle) + '°';
+    if (!isPause) {
+        plank.style.transform = `rotate(${angle}deg)`;
+        angleDisplay.innerText = Math.round(angle) + '°';
+    }
 
     leftTotalWeightDisplay.innerText = leftTotalWeight + ' kg';
     rightTotalWeightDisplay.innerText = rightTotalWeight + ' kg';
@@ -177,5 +180,27 @@ resetBtn.addEventListener('click', () => {
 
     historyContainer.innerHTML = '<div class="log-entry placeholder">No action has been taken.</div>';
 
+    isPause = false;
+    pauseBtn.innerText = "Pause";
+    pauseBtn.classList.remove('resume-mode');
+
     createNextWeight();
+});
+
+pauseBtn.addEventListener('click', () => {
+    isPause = !isPause; 
+    
+    if (isPause) {
+        pauseBtn.innerText = "Resume Mechanism";
+        pauseBtn.classList.add('resume-mode');
+        
+        plank.style.transform = 'rotate(0deg)';
+        angleDisplay.innerText = '0° (Paused)';
+        
+    } else {
+        pauseBtn.innerText = "Pause Mechanism";
+        pauseBtn.classList.remove('resume-mode');
+        
+        updateSimulation();
+    }
 });
