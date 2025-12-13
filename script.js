@@ -1,11 +1,11 @@
 const plank = document.getElementById('plank');
-
 const leftTotalWeightDisplay = document.getElementById('left-total-weight');
 const rightTotalWeightDisplay = document.getElementById('right-total-weight');
 const nextWeightDisplay = document.getElementById('next-weight');
 const angleDisplay = document.getElementById('angle');
 const weightPreviewDisplay = document.getElementById('weight-preview');
 const historyContainer = document.getElementById('history-container');
+const soundEffect = document.getElementById('sound-effect');
 
 const resetBtn = document.getElementById('reset-btn');
 const pauseBtn = document.getElementById('pause-btn');
@@ -28,6 +28,8 @@ window.addEventListener('load', () => {
     const savedData = localStorage.getItem('seesawStatus');
     const savedHistory = localStorage.getItem('seesawHistory');
 
+    createScaler();
+
     createNextWeight();
 
     if (savedHistory) {
@@ -40,7 +42,7 @@ window.addEventListener('load', () => {
     if (savedData) {
         const savedObjects = JSON.parse(savedData);
         savedObjects.forEach(obj => {
-            createObjectElement(obj.weight, obj.position, obj.color); 
+            createObjectElement(obj.weight, obj.position, obj.color, true); 
         });
         updateSimulation();
     }
@@ -53,6 +55,14 @@ function getRandomWeight(min, max) {
 function getRandomColor() {
     const index = Math.floor(Math.random() * COLORS.length);
     return COLORS[index];
+}
+
+function playSoundEffect() {
+    soundEffect.currentTime = 0;
+    
+    soundEffect.play().catch(error => {
+        console.log(error);
+    });
 }
 
 function pushHistoryEntry(weight, position, isRestoring = false) {
@@ -87,7 +97,7 @@ function createNextWeight() {
     weightPreviewDisplay.style.backgroundColor = nextColor;
 }
 
-function createObjectElement(weight, distance, color) {
+function createObjectElement(weight, distance, color, storage = false ) {
     const weightDiv = document.createElement('div');
     weightDiv.classList.add('weight');
     weightDiv.innerText = weight + 'kg';
@@ -105,6 +115,10 @@ function createObjectElement(weight, distance, color) {
         color: color,
         element: weightDiv
     });
+
+    if (!storage) {
+        playSoundEffect();
+    }
 }
 
 function updateSimulation() {
@@ -148,6 +162,32 @@ function saveStatus() {
         color: obj.color
     }));
     localStorage.setItem('seesawStatus', JSON.stringify(statusToSave));
+}
+
+function createScaler() {
+    const scaleContainer = document.getElementById('scale');
+    
+    for (let i = -250; i <= 250; i += 50) {
+        if (i === 0) continue;
+        
+        const line = document.createElement('div');
+        line.classList.add('line');
+        line.style.left = (PLANK_WIDTH / 2) + i + 'px';
+        scaleContainer.appendChild(line);
+        
+        const label = document.createElement('div');
+        label.classList.add('line-label');
+        label.innerText = Math.abs(i);
+        label.style.left = (PLANK_WIDTH / 2) + i + 'px';
+        
+        if (i % 100 === 0) {
+            label.style.fontWeight = 'bold';
+            label.style.color = '#34495e';
+            line.style.backgroundColor = 'rgba(255, 255, 255, 0.6)';
+        }
+        
+        scaleContainer.appendChild(label);
+    }
 }
 
 plank.addEventListener('click', function(event) {
