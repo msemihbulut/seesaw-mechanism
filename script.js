@@ -1,10 +1,24 @@
 const plank = document.getElementById('plank');
 const leftWeightDisplay = document.getElementById('left-weight');
 const rightWeightDisplay = document.getElementById('right-weight');
+const resetBtn = document.getElementById('reset-btn');
 const PLANK_WIDTH = 600;
 
 let objects = [];
 
+window.addEventListener('load', () => {
+    const savedData = localStorage.getItem('seesawStatus');
+    
+    if (savedData) {
+        const savedObjects = JSON.parse(savedData);
+        
+        savedObjects.forEach(obj => {
+            createObjectElement(obj.weight, obj.position); 
+        });
+        
+        updateSimulation();
+    }
+});
 
 function getRandomWeight(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -28,9 +42,6 @@ function createObjectElement(weight, distance) {
         position: distance,
         element: weightDiv
     });
-    
-    // Console check
-    console.log(`Object added: ${weight}kg, Location: ${distance.toFixed(1)}px`);
 }
 
 function updateSimulation() {
@@ -62,8 +73,16 @@ function updateSimulation() {
     leftWeightDisplay.innerText = leftTotalWeight + ' kg';
     rightWeightDisplay.innerText = rightTotalWeight + ' kg';
 
-    // Console Check
-    console.log(`Left Torque: ${leftTorque.toFixed(1)}, Right Torque: ${rightTorque.toFixed(1)}, Angle: ${angle}`);
+    saveStatus();
+}
+
+function saveStatus() {
+    const statusToSave = objects.map(obj => ({
+        weight: obj.weight,
+        position: obj.position
+    }));
+    
+    localStorage.setItem('seesawStatus', JSON.stringify(statusToSave));
 }
 
 plank.addEventListener('click', function(event) {
@@ -79,4 +98,17 @@ plank.addEventListener('click', function(event) {
     createObjectElement(weight, distanceFromPivot);
 
     updateSimulation();
+});
+
+resetBtn.addEventListener('click', () => {
+    objects = [];
+    
+    const weights = document.querySelectorAll('.weight');
+    weights.forEach(el => el.remove());
+    
+    localStorage.removeItem('seesawStatus');
+    
+    plank.style.transform = 'rotate(0deg)';
+    document.getElementById('left-weight').innerText = '0 kg';
+    document.getElementById('right-weight').innerText = '0 kg';
 });
