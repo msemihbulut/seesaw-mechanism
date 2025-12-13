@@ -14,19 +14,33 @@ const PLANK_WIDTH = 600;
 
 let objects = [];
 let nextWeight = 0;
+let nextColor = '';
 let activityHistory = [];
 let isPause = false;
 
+const COLORS = [
+    '#e74c3c', '#8e44ad', '#3498db', '#1abc9c', '#f1c40f', 
+    '#d35400', '#c0392b', '#16a085', '#2980b9', '#27ae60',
+    '#f39c12', '#9b59b6', '#2c3e50', '#e67e22', '#e84393'
+];
+
 window.addEventListener('load', () => {
     const savedData = localStorage.getItem('seesawStatus');
+    const savedHistory = localStorage.getItem('seesawHistory');
 
     createNextWeight();
+
+    if (savedHistory) {
+        activityHistory = JSON.parse(savedHistory);
+        activityHistory.forEach(log => {
+            pushHistoryEntry(log.weight, log.position, true);
+        });
+    }
     
     if (savedData) {
         const savedObjects = JSON.parse(savedData);
-        
         savedObjects.forEach(obj => {
-            createObjectElement(obj.weight, obj.position); 
+            createObjectElement(obj.weight, obj.position, obj.color); 
         });
         updateSimulation();
     }
@@ -36,7 +50,12 @@ function getRandomWeight(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function pushHistoryEntry(weight, position) {
+function getRandomColor() {
+    const index = Math.floor(Math.random() * COLORS.length);
+    return COLORS[index];
+}
+
+function pushHistoryEntry(weight, position, isRestoring = false) {
     const placeholder = document.querySelector('.placeholder');
     if (placeholder) {
         placeholder.remove();
@@ -47,31 +66,33 @@ function pushHistoryEntry(weight, position) {
 
     const historyEntry = document.createElement('div');
     historyEntry.classList.add('history-entry');
-    
     historyEntry.innerText = ` ${weight}kg dropped on ${side} side at ${distance}px from pivot`;
 
     historyContainer.prepend(historyEntry);
+
+    if (!isRestoring) {
+        activityHistory.push({ weight, position });
+        localStorage.setItem('seesawHistory', JSON.stringify(activityHistory));
+    }
 }
 
 function createNextWeight() {
     nextWeight = getRandomWeight(1, 10);
+    nextColor = getRandomColor();
+
     nextWeightDisplay.innerText = nextWeight + ' kg';
-    
-    nextWeightDisplay.style.backgroundColor = '#8e44ad';
-    nextWeightDisplay.style.borderColor = '#6c3483';
+    nextWeightDisplay.style.backgroundColor = nextColor;
 
     weightPreviewDisplay.innerText = nextWeight + 'kg';
-    weightPreviewDisplay.style.backgroundColor = '#8e44ad';
-    weightPreviewDisplay.style.borderColor = '#6c3483';
+    weightPreviewDisplay.style.backgroundColor = nextColor;
 }
 
-function createObjectElement(weight, distance) {
+function createObjectElement(weight, distance, color) {
     const weightDiv = document.createElement('div');
     weightDiv.classList.add('weight');
     weightDiv.innerText = weight + 'kg';
     
-    weightDiv.style.backgroundColor = '#8e44ad';
-    weightDiv.style.borderColor = '#6c3483';
+    weightDiv.style.backgroundColor = color;
 
     const leftPosition = (PLANK_WIDTH / 2) + distance;
     weightDiv.style.left = leftPosition + 'px';
@@ -81,6 +102,7 @@ function createObjectElement(weight, distance) {
     objects.push({
         weight: weight,
         position: distance,
+        color: color,
         element: weightDiv
     });
 }
@@ -105,7 +127,6 @@ function updateSimulation() {
     });
 
     let angle = (rightTorque - leftTorque) / 10;
-
     if (angle > 30) angle = 30;
     if (angle < -30) angle = -30;
 
@@ -123,9 +144,9 @@ function updateSimulation() {
 function saveStatus() {
     const statusToSave = objects.map(obj => ({
         weight: obj.weight,
-        position: obj.position
+        position: obj.position,
+        color: obj.color
     }));
-    
     localStorage.setItem('seesawStatus', JSON.stringify(statusToSave));
 }
 
@@ -133,13 +154,12 @@ plank.addEventListener('click', function(event) {
     const rect = plank.getBoundingClientRect();
     const pivotX = rect.left + rect.width / 2;
     const clickX = event.clientX;
-
     let distanceFromPivot = clickX - pivotX;
 
     const weight = nextWeight;
+    const color = nextColor;
 
-    createObjectElement(weight, distanceFromPivot);
-
+    createObjectElement(weight, distanceFromPivot, color);
     updateSimulation();
 
     pushHistoryEntry(weight, distanceFromPivot);
@@ -178,10 +198,12 @@ resetBtn.addEventListener('click', () => {
     document.getElementById('right-total-weight').innerText = '0 kg';
     angleDisplay.innerText = '0°';
 
+    activityLogData = [];
+    localStorage.removeItem('seesawHistory');
     historyContainer.innerHTML = '<div class="log-entry placeholder">No action has been taken.</div>';
 
     isPause = false;
-    pauseBtn.innerText = "Pause";
+    pauseBtn.innerText = "Pause Mechanism";
     pauseBtn.classList.remove('resume-mode');
 
     createNextWeight();
@@ -193,14 +215,12 @@ pauseBtn.addEventListener('click', () => {
     if (isPause) {
         pauseBtn.innerText = "Resume Mechanism";
         pauseBtn.classList.add('resume-mode');
-        
         plank.style.transform = 'rotate(0deg)';
         angleDisplay.innerText = '0° (Paused)';
         
     } else {
         pauseBtn.innerText = "Pause Mechanism";
         pauseBtn.classList.remove('resume-mode');
-        
         updateSimulation();
     }
 });
