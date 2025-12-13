@@ -4,6 +4,7 @@ const leftTotalWeightDisplay = document.getElementById('left-total-weight');
 const rightTotalWeightDisplay = document.getElementById('right-total-weight');
 const nextWeightDisplay = document.getElementById('next-weight');
 const angleDisplay = document.getElementById('angle');
+const weightPreviewDisplay = document.getElementById('weight-preview');
 
 const resetBtn = document.getElementById('reset-btn');
 
@@ -37,6 +38,10 @@ function createNextWeight() {
     
     nextWeightDisplay.style.backgroundColor = '#8e44ad';
     nextWeightDisplay.style.borderColor = '#6c3483';
+
+    weightPreviewDisplay.innerText = nextWeight + 'kg';
+    weightPreviewDisplay.style.backgroundColor = '#8e44ad';
+    weightPreviewDisplay.style.borderColor = '#6c3483';
 }
 
 function createObjectElement(weight, distance) {
@@ -118,19 +123,36 @@ plank.addEventListener('click', function(event) {
     createNextWeight();
 });
 
+plank.addEventListener('mousemove', (event) => {
+    const rect = plank.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+
+    weightPreviewDisplay.style.display = 'flex';
+    weightPreviewDisplay.style.left = x + 'px';
+});
+
+
+plank.addEventListener('mouseleave', () => {
+    weightPreviewDisplay.style.display = 'none';
+});
+
 resetBtn.addEventListener('click', () => {
     objects = [];
     
     const weights = document.querySelectorAll('.weight');
-    weights.forEach(el => el.remove());
+
+    weights.forEach(el => {
+        if (el.id !== 'weight-preview') {
+            el.remove();
+        }
+    });
     
     localStorage.removeItem('seesawStatus');
-
-    angleDisplay.innerText = '0°';
     
     plank.style.transform = 'rotate(0deg)';
     document.getElementById('left-total-weight').innerText = '0 kg';
     document.getElementById('right-total-weight').innerText = '0 kg';
+    angleDisplay.innerText = '0°';
 
     createNextWeight();
 });
