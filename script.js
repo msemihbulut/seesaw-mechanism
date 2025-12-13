@@ -5,6 +5,7 @@ const rightTotalWeightDisplay = document.getElementById('right-total-weight');
 const nextWeightDisplay = document.getElementById('next-weight');
 const angleDisplay = document.getElementById('angle');
 const weightPreviewDisplay = document.getElementById('weight-preview');
+const historyContainer = document.getElementById('history-container');
 
 const resetBtn = document.getElementById('reset-btn');
 
@@ -12,6 +13,7 @@ const PLANK_WIDTH = 600;
 
 let objects = [];
 let nextWeight = 0;
+let activityHistory = [];
 
 window.addEventListener('load', () => {
     const savedData = localStorage.getItem('seesawStatus');
@@ -30,6 +32,23 @@ window.addEventListener('load', () => {
 
 function getRandomWeight(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function pushHistoryEntry(weight, position) {
+    const placeholder = document.querySelector('.placeholder');
+    if (placeholder) {
+        placeholder.remove();
+    }
+
+    const side = position < 0 ? "left" : "right";
+    const distance = Math.abs(position).toFixed(0);
+
+    const historyEntry = document.createElement('div');
+    historyEntry.classList.add('history-entry');
+    
+    historyEntry.innerText = ` ${weight}kg dropped on ${side} side at ${distance}px from pivot`;
+
+    historyContainer.prepend(historyEntry);
 }
 
 function createNextWeight() {
@@ -120,6 +139,8 @@ plank.addEventListener('click', function(event) {
 
     updateSimulation();
 
+    pushHistoryEntry(weight, distanceFromPivot);
+
     createNextWeight();
 });
 
@@ -153,6 +174,8 @@ resetBtn.addEventListener('click', () => {
     document.getElementById('left-total-weight').innerText = '0 kg';
     document.getElementById('right-total-weight').innerText = '0 kg';
     angleDisplay.innerText = '0°';
+
+    historyContainer.innerHTML = '<div class="log-entry placeholder">No action has been taken.</div>';
 
     createNextWeight();
 });
