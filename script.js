@@ -238,9 +238,9 @@ resetBtn.addEventListener('click', () => {
     document.getElementById('right-total-weight').innerText = '0 kg';
     angleDisplay.innerText = '0°';
 
-    activityLogData = [];
+    activityHistory = [];
     localStorage.removeItem('seesawHistory');
-    historyContainer.innerHTML = '<div class="log-entry placeholder">No action has been taken.</div>';
+    historyContainer.innerHTML = '<div class="history-entryplaceholder">No action has been taken.</div>';
 
     isPause = false;
     pauseBtn.innerText = "Pause Mechanism";
