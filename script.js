@@ -240,7 +240,7 @@ resetBtn.addEventListener('click', () => {
 
     activityHistory = [];
     localStorage.removeItem('seesawHistory');
-    historyContainer.innerHTML = '<div class="history-entryplaceholder">No action has been taken.</div>';
+    historyContainer.innerHTML = '<div class="history-entry placeholder">No action has been taken.</div>';
 
     isPause = false;
     pauseBtn.innerText = "Pause Mechanism";
