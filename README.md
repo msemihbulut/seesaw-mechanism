@@ -59,7 +59,7 @@ Potential improvements include physics engine integration, weight removal functi
 
 ## AI Assistance
 
-AI tools were used for bug identification. The core application logic, physics calculations, and implementation were developed independently.
+AI tools were used for debugging. The core application logic, physics calculations, and implementation were developed independently.
 
 ## Author
 
