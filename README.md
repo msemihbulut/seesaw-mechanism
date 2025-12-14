@@ -24,6 +24,10 @@ seesaw-mechanism/
 └── README.md           # This file
 ```
 
+## Project Link
+
+You can click the link to try out the project: https://msemihbulut.github.io/seesaw-mechanism/
+
 ## Thought Process
 
 The project was developed incrementally, starting with basic HTML and CSS structure to establish the visual foundation. The core physics calculations were implemented next, focusing on torque-based angle computation. Once the fundamental mechanics were working, the focus shifted to user experience enhancements: weight preview for better interaction, activity history for tracking actions, and pause/resume functionality for analysis.
@@ -55,7 +59,7 @@ Potential improvements include physics engine integration, weight removal functi
 
 ## AI Assistance
 
-AI tools were used for bug identification. The core application logic, physics calculations, and implementation were developed independently.
+AI tools were used for debugging. The core application logic, physics calculations, and implementation were developed independently.
 
 ## Author
 
